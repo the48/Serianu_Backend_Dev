@@ -1,6 +1,6 @@
 import requests
 import json
-from utils import *
+from .utils import *
 
 api_key = "b6f686840bee4388b83d06d9fc1cd729"
 endpoint = "https://api.ipgeolocation.io/timezone"

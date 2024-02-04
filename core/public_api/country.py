@@ -1,6 +1,6 @@
 import requests
 import json
-from utils import *
+from .utils import *
 
 api_key = "ekgwCVrXcVcTvUf2umm7BQ==JR27iaVgRROBamda"
 endpoint = "https://api.api-ninjas.com/v1/reversegeocoding"
@@ -14,7 +14,6 @@ def fetch_data(coordinates : tuple):
     try:
         latitude, longitude = coordinates
 
-        # https://api.api-ninjas.com/v1/reversegeocoding?lat=51.509865&lon=-0.118092
         response = requests.get(f"{endpoint}?lat={latitude}&lon={longitude}&apiKey={api_key}", headers=headers)
 
         if response.status_code != 200:

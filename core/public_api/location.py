@@ -1,6 +1,6 @@
 import requests
 import json
-from utils import *
+from .utils import *
 
 api_key = "65be444b5a709411100311ncm1e3d73"
 endpoint = "https://geocode.maps.co"

@@ -1,6 +1,6 @@
 import requests
 import json
-from utils import *
+from .utils import *
 
 
 # https://newsapi.org/v2/everything?q=bitcoin&apiKey=

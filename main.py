@@ -1,19 +1,17 @@
 import uvicorn
 from fastapi import FastAPI
 
-# from core.public_api.location import *
-# from core.public_api.weather import *
-# from core.public_api.timezone import *
-# from core.public_api.news import *
-# from core.public_api.map import *
-
-from core.public_api.location import fetch_data
-from core.public_api.weather import fetch_data
-
+from core.public_api import location
+from core.public_api import weather  
+from core.public_api import timezone
+from core.public_api import news
+from core.public_api import country
 
 app = FastAPI()
 
 # change the schema name
+# called periodically in sequence to push data to db
+# convert all to post
 
 @app.get("/")
 async def everyDayWeBufferin():
@@ -22,24 +20,29 @@ async def everyDayWeBufferin():
 # path parameter
 
 # print(fetch_data("balozi+estate")) # url encode
-@app.get("/location")
-async def get_location_coordinates(location : str):
-    return location.fetch_data(location)
+@app.get("/location/{strlocation}")
+async def get_location_coordinates(strlocation : str):
+    return location.fetch_data(strlocation)
 
 
-@app.get("/weather")
-async def get_location_weather(coordinates : tuple):
-    return weather.fetch_data(coordinates) # hit the endpoint with coordinates returned
+@app.get("/weather/{strcoordinates}")
+async def get_location_weather(strcoordinates : str):
+    strcoordinates = tuple(strcoordinates.split(","))
+    return weather.fetch_data(strcoordinates) # hit the endpoint with coordinates returned
 
 
-@app.get("/timezone")
-async def get_location_local_time(coordinates : tuple):
-    return timezone.fetch_data(coordinates) # hit the endpoint with coordinates returned
+@app.get("/timezone/{strcoordinates}")
+async def get_location_local_time(strcoordinates : str):
+    return timezone.fetch_data(strcoordinates) # hit the endpoint with coordinates returned
 
 
-@app.get("/news")
-async def get_location_news(location : str):
-    return news.fetch_data(location) # hit the endpoint with coordinates returned
+@app.get("/news/{strlocation}")
+async def get_location_news(strlocation : str):
+    return news.fetch_data(strlocation) # hit the endpoint with coordinates returned
+
+@app.get("/news/{strlocation}")
+async def get_location_news(strlocation : str):
+    return country.fetch_data(strlocation) # hit the endpoint with coordinates returned
 
 
 # @app.get("/maparea/{coordinates}")
