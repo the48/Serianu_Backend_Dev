@@ -1,0 +1,30 @@
+
+
+use cross apply in spotify
+add triggers yoo
+
+
+
+**twitter api see what people are saying there
+
+
+***time and timezone api based on lat and long
+
+
+post real time image of place**
+post current temp etc to store in db
+
+
+
+
+
+** APIS **
+type in location
+gelocation
+weather
+local time timezone what what
+news
+maps area thing
+
+
+exclude asd.py
