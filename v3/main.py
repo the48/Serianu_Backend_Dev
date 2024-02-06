@@ -6,14 +6,35 @@ from database.Models import NewsUpdate, Token
 from fastapi import Depends, HTTPException, status
 from core.Auth import *
 
-from .database import *
-
+from database import Models, Session, Schemas, Operations
 
 from data_source import Location, Weather, Country, News, Timezone
 
-models.Base.metadata.create_all(bind=engine)
+Session.Base.metadata.create_all(bind=Session.engine)
+
+def get_db():
+    db = Session.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
 
 app = FastAPI(title = settings.PROJECT_NAME, version = settings.PROJECT_VERSION)
+
+
+@app.post("/request/", response_model=Schemas.Request)
+def create_request(user: Schemas.RequestCreate, db: Session = Depends(get_db)):
+    return Operations.create_requestID(db = db, request = user)
+
+
+@app.get("/users/{id}", response_model = Schemas.Request)
+def get_request(user_id: str, db: Session = Depends(get_db)):
+    request = Operations.get_requestID(db, user_id)
+    if request is None:
+        raise HTTPException(status_code=404, detail="Request not found")
+    return request
 
 # v1 ?
 # Only want the legit endpoints here, data fetch later
@@ -104,7 +125,6 @@ def populate_db(location):
 
 
 # print(populate_db("nairobi"))
-models.
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port = 8000)

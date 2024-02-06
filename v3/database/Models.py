@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Column, Integer, String
+from .Session import Base
 
 # POST news update
 class NewsUpdate(BaseModel):
@@ -21,10 +22,10 @@ class Operator(BaseModel):
     OperatorID: str
 
 
-class Request():
+class Request(Base):
     __tablename__ = "Requests"
 
-    RequestID = Column(Integer, primary_key = True)
+    RequestID = Column(String, primary_key=True)
     Payload = Column(String)
     Timestamp = Column(String)
 
