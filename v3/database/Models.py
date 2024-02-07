@@ -69,3 +69,12 @@ class Timezone(Base):
     Time = Column(String)
     isDST = Column(Boolean)
     DST = Column(String)
+
+
+class News(Base):
+    __tablename__ = "News"
+
+    RequestID = Column(String, primary_key=True)
+    Title = Column(String)
+    PublishedDate = Column(String)
+    Link = Column(String)

@@ -98,3 +98,21 @@ class Timezone(TimezoneBase):
         orm_mode = True
 
 # TimeZone   
+        
+
+# Weather
+class NewsBase(BaseModel):
+    Title : str
+    PublishedDate : str
+    Link : str
+
+class NewsCreate(WeatherBase):
+
+    def  __str__(self):
+        return str({"Title": self.Title, "PublishedDate": self.PublishedDate, "Link": self.Link})
+
+class News(WeatherBase):
+    class Config:
+        orm_mode = True
+
+# Weather  

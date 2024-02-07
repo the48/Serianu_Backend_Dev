@@ -85,7 +85,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     return Token(access_token = access_token, token_type = "bearer")
 
 
-def populate_db(latitude, longitude):
+def populate_db(location):
     try:
         # Location
         # location_data = Location.FetchData(location)
@@ -99,7 +99,7 @@ def populate_db(latitude, longitude):
         
         # Weather
         # weather_data = Weather.FetchData(latitude, longitude)
-        request_data = {"Latitude": f"{latitude}", "Longitude": f"{longitude}"}
+        # request_data = {"Latitude": f"{latitude}", "Longitude": f"{longitude}"}
         # if weather_data["StatusCode"] == "200":
         #     return Operations.create_weather(db = db_conn, request = request_data, response = weather_data["Content"])
         # else:
@@ -115,27 +115,26 @@ def populate_db(latitude, longitude):
 
         
 
-        # get timezone
-        timezone_data = Timezone.FetchData(latitude, longitude)
-        if timezone_data["StatusCode"] == "200":
-            return Operations.create_timezone(db = db_conn, request = str(request_data), response = timezone_data["Content"])
-        else:
-            return # db entry failed, send request
-
-
-        # # get news
-        # news_data = News.FetchData(location)["Content"]
-        # if news_data["StatusCode"] == "200":
-        #     latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
+        # Timezone
+        # timezone_data = Timezone.FetchData(latitude, longitude)
+        # if timezone_data["StatusCode"] == "200":
+        #     return Operations.create_timezone(db = db_conn, request = str(request_data), response = timezone_data["Content"])
         # else:
         #     return # db entry failed, send request
+
+
+        # News
+        news_data = News.FetchData(location)
+        if news_data["StatusCode"] == "200":
+            return Operations.create_news(db = db_conn, request = str(location), response = news_data["Content"])
+        else:
+            return # db entry failed, send request
 
 
     except Exception as error:
         print(error)
 
-print(populate_db("-1.2832533", "36.8172449"))
-        # use guid for req id
+print(populate_db("Nairobi"))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port = 8000)

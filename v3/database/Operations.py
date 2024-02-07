@@ -114,3 +114,23 @@ def create_timezone(db: Session, request : str, response: Schemas.WeatherCreate)
     db.commit()
     db.refresh(location)
     return location
+
+
+def create_news(db: Session, request : str, response: Schemas.NewsCreate):
+    requestID = generate_requestID()
+
+    create_requestID(requestID, db, str(request))
+
+    data = json.loads(response)
+
+    location = Models.News(
+        RequestID = requestID,
+        Title = data["Title"],
+        PublishedDate = data["PublishedDate"],
+        Link = data["Link"]
+    )
+
+    db.add(location)
+    db.commit()
+    db.refresh(location)
+    return location
