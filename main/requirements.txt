@@ -1,3 +1,6 @@
 python-jose[cryptography]
-bcrypt==4.0.1 
-pscyopg bin
+passlib[bcrypt==4.0.1]
+python-multipart
+sqlalchemy
+fastapi
+pscyopg-binary
