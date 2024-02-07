@@ -127,7 +127,7 @@ def create_news(db: Session, request : str, response: Schemas.NewsCreate):
 
     data = json.loads(response)
 
-    location = Models.News(
+    location = Models.Newss(
         RequestID = requestID,
         Title = data["Title"],
         PublishedDate = data["PublishedDate"],

@@ -1,4 +1,5 @@
 import json
+import time
 from fastapi import FastAPI
 from fastapi.security import OAuth2PasswordRequestForm
 import uvicorn
@@ -36,8 +37,8 @@ def create_location(location: Schemas.LocationCreate, db: Session = Depends(get_
     return Operations.create_location(db = db, request = location)
 
 
-@app.get("/updates", description = "Get Latest News Updates")
-def get_updates(db: Session = Depends(get_db)):
+@app.get("/events", description = "Get Latest News Updates")
+def get_updates(db: Session = Depends(get_db), r : str = Depends(oauth2_scheme)):
     request = Operations.get_updates(db)
     if request is None:
         raise HTTPException(status_code=404, detail="Request not found")
@@ -63,8 +64,8 @@ async def root():
 #     return {"message": "Updates endpoint"} # send to controller
 
 
-@app.post("/news/", description = "Post News Update")
-async def PostNewsUpdate(update: Schemas.News, db: Session = Depends(get_db)): # = Depends(oauth2_scheme)
+@app.post("/events/", description = "Post News Update")
+async def PostNewsUpdate(update: Schemas.News = Depends(oauth2_scheme), db: Session = Depends(get_db)): # = Depends(oauth2_scheme)
     request_id = Operations.generate_requestID()
     update = Newss(RequestID = request_id, Title = update.Title, PublishedDate = update.PublishedDate, Link = update.Link)
 
@@ -94,8 +95,8 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     return Token(access_token = access_token, token_type = "bearer")
 
 
-@app.get("/data/{location}", response_model = Schemas.MainResponse, description = "Aggregates all the data")
-async def get_all_data(location: str, db: Session = Depends(get_db)):
+@app.get("/dashboard/{location}", response_model = Schemas.MainResponse, description="Aggregates all the data")
+async def get_all_data(location: str, db: Session = Depends(get_db), r : str = Depends(oauth2_scheme)):
     if location is None:
         raise HTTPException(status_code = 404, detail="Location not found")
 
@@ -157,7 +158,7 @@ def populate_db(location):
 
         if location_data["StatusCode"] == "200":
             latitude, longitude = location_data["Content"].replace(" ", "").split(",")
-            return Operations.create_location(db = db_conn, request = location, response = location_data)      
+            Operations.create_location(db = db_conn, request = location, response = location_data)      
         else:
             Operations.create_failed_request(db = db_conn, request = location, response = location_data)
             pass
@@ -166,7 +167,7 @@ def populate_db(location):
         weather_data = Weather.FetchData(latitude, longitude)
         request_data = {"Latitude": f"{latitude}", "Longitude": f"{longitude}"}
         if weather_data["StatusCode"] == "200":
-            return Operations.create_weather(db = db_conn, request = request_data, response = weather_data["Content"])
+            Operations.create_weather(db = db_conn, request = request_data, response = weather_data["Content"])
         else:
             Operations.create_failed_request(db = db_conn, request = request_data, response = weather_data["Content"])
         
@@ -174,32 +175,34 @@ def populate_db(location):
         # Country
         country_data = Country.FetchData(latitude, longitude)
         if country_data["StatusCode"] == "200":
-            return Operations.create_country(db = db_conn, request = str(request_data), response = country_data["Content"])
+            Operations.create_country(db = db_conn, request = str(request_data), response = country_data["Content"])
         else:
             Operations.create_failed_request(db = db_conn, request = request_data, response = country_data["Content"])
-
-        
 
         # Timezone
         timezone_data = Timezone.FetchData(latitude, longitude)
         if timezone_data["StatusCode"] == "200":
-            return Operations.create_timezone(db = db_conn, request = str(request_data), response = timezone_data["Content"])
+            Operations.create_timezone(db = db_conn, request = str(request_data), response = timezone_data["Content"])
         else:
-            return # db entry failed, send request
-
+            Operations.create_failed_request(db = db_conn, request = location, response = timezone_data)
 
         # News
-        news_data = Newss.FetchData(location)
+        news_data = News.FetchData(location)
         if news_data["StatusCode"] == "200":
-            return Operations.create_news(db = db_conn, request = str(location), response = news_data["Content"])
+            Operations.create_news(db = db_conn, request = str(location), response = news_data["Content"])
         else:
-            return # db entry failed, send request
-
+            Operations.create_failed_request(db = db_conn, request = location, response = news_data)
 
     except Exception as error:
         print(error)
 
-print(populate_db("Nairobi"))
+def task_populate_db():
+    populate_db("Mombasa")
+    time.sleep(5000)
+    populate_db("Nairobi")
+
+task_populate_db()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port = 8000)
+    
