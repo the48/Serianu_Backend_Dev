@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Boolean, String
+from sqlalchemy.orm import relationship
 from .Session import Base
 
 # POST news update
@@ -28,6 +29,18 @@ class Request(Base):
     RequestID = Column(String, primary_key=True)
     Payload = Column(String)
     Timestamp = Column(String)
+    Successful = Column(Boolean)
 
+    # location = relationship("Location", back_populates="request", uselist=False)
 
+    
 
+class Location(Base):
+    __tablename__ = "Locations"
+
+    RequestID = Column(String, primary_key=True)
+    Location = Column(String)
+    Latitude = Column(String)
+    Longitude = Column(String)
+
+    # request = relationship("Requests", back_populates="Location")

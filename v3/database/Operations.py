@@ -1,3 +1,5 @@
+import datetime
+import uuid
 from sqlalchemy.orm import Session
 
 from . import Models, Schemas
@@ -6,10 +8,47 @@ def get_requestID(db: Session, requestID: str):
     return db.query(Models.Request).filter(Models.Request.RequestID == requestID).first()
 
 
-def create_requestID(db: Session, request: Schemas.RequestCreate):
-    request = Models.Request(RequestID = request.RequestID, Payload = request.Payload, Timestamp = request.Timestamp)
+def generate_requestID():
+    return uuid.uuid4().hex
+
+
+def create_requestID(uuid, db: Session, request: Schemas.RequestCreate):
+    request = Models.Request(RequestID = uuid, Payload = str(request), Successful = True, Timestamp = str(datetime.datetime.now().replace(microsecond = 0))
+)
 
     db.add(request)
     db.commit()
     db.refresh(request)
     return request
+
+
+def create_location(db: Session, request : str, response: Schemas.LocationCreate):
+    requestID = generate_requestID()
+
+    create_requestID(requestID, db, request)
+
+    latitude, longitude = response["Content"].replace(" ", "").split(",")
+
+    location = Models.Location(
+        RequestID = requestID,
+        Location = request,
+        Latitude = latitude,
+        Longitude = longitude
+    )
+
+    db.add(location)
+    db.commit()
+    db.refresh(location)
+    return location
+
+
+def create_failed_request(db: Session, request : str, response: Schemas.RequestCreate):
+    requestID = generate_requestID()
+
+    # create_requestID(requestID, db, request)
+    request = Models.Request(RequestID = requestID, Payload = str(request), Successful = False, Timestamp = str(datetime.datetime.now().replace(microsecond = 0)))
+        
+    db.add(request)
+    db.commit()
+    db.refresh(request)
+    return request                         

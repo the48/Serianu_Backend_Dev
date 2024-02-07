@@ -6,7 +6,7 @@ from database.Models import NewsUpdate, Token
 from fastapi import Depends, HTTPException, status
 from core.Auth import *
 
-from database import Models, Session, Schemas, Operations
+from database import Session, Schemas, Operations
 
 from data_source import Location, Weather, Country, News, Timezone
 
@@ -19,14 +19,21 @@ def get_db():
     finally:
         db.close()
 
-
+db_conn = Session.SessionLocal()
 
 app = FastAPI(title = settings.PROJECT_NAME, version = settings.PROJECT_VERSION)
 
 
 @app.post("/request/", response_model=Schemas.Request)
 def create_request(user: Schemas.RequestCreate, db: Session = Depends(get_db)):
-    return Operations.create_requestID(db = db, request = user)
+    return Operations.create_requestID("test", db = db, request = user)
+
+# have to create requestid and use with this call
+# create request id first, insert to requests, then add to other endpoints
+# @app.post("/location/", response_model=Schemas.Location)
+def create_location(location: Schemas.LocationCreate, db: Session = Depends(get_db)):
+    return Operations.create_location(db = db, request = location)
+
 
 
 @app.get("/users/{id}", response_model = Schemas.Request)
@@ -81,50 +88,52 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
 def populate_db(location):
     try:
         location_data = Location.FetchData(location)
-        if weather_data["StatusCode"] == "200":
+        if location_data["StatusCode"] == "200":
             latitude, longitude = location_data["Content"].replace(" ", "").split(",")
-            # send to db
+            return Operations.create_location(db = db_conn, request = location, response = location_data)
+        
         else:
-            return # db entry failed, send request
+            Operations.create_failed_request(db = db_conn, request = location, response = location_data)
+            return None
         
 
-        # get weather
-        weather_data = Weather.FetchData(latitude, longitude)["Content"]
-        if weather_data["StatusCode"] == "200":
-            latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
-        else:
-            return # db entry failed, send request
+        # # get weather
+        # weather_data = Weather.FetchData(latitude, longitude)["Content"]
+        # if weather_data["StatusCode"] == "200":
+        #     latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
+        # else:
+        #     return # db entry failed, send request
         
 
-        # get country
-        country_data = Country.FetchData(latitude, longitude)["Content"]
-        if country_data["StatusCode"] == "200":
-            latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
-        else:
-            return # db entry failed, send request
+        # # get country
+        # country_data = Country.FetchData(latitude, longitude)["Content"]
+        # if country_data["StatusCode"] == "200":
+        #     latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
+        # else:
+        #     return # db entry failed, send request
         
 
-        # get timezone
-        timezone_data = Timezone.FetchData(latitude, longitude)["Content"]
-        if timezone_data["StatusCode"] == "200":
-            latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
-        else:
-            return # db entry failed, send request
+        # # get timezone
+        # timezone_data = Timezone.FetchData(latitude, longitude)["Content"]
+        # if timezone_data["StatusCode"] == "200":
+        #     latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
+        # else:
+        #     return # db entry failed, send request
 
 
-        # get news
-        news_data = News.FetchData(location)["Content"]
-        if news_data["StatusCode"] == "200":
-            latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
-        else:
-            return # db entry failed, send request
+        # # get news
+        # news_data = News.FetchData(location)["Content"]
+        # if news_data["StatusCode"] == "200":
+        #     latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
+        # else:
+        #     return # db entry failed, send request
 
 
     except Exception as error:
         print(error)
 
-
-# print(populate_db("nairobi"))
+print(populate_db("Nairobi"))
+        # use guid for req id
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port = 8000)
