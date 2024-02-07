@@ -59,3 +59,13 @@ class Country(Base):
 
     RequestID = Column(String, primary_key=True)
     Country = Column(String)
+
+class Timezone(Base):
+    __tablename__ = "Timezone"
+
+    RequestID = Column(String, primary_key=True)
+    Timezone = Column(String)
+    Date = Column(String)
+    Time = Column(String)
+    isDST = Column(Boolean)
+    DST = Column(String)

@@ -76,3 +76,25 @@ class Country(WeatherBase):
         orm_mode = True
 
 # Country   
+        
+
+# TimeZone
+        
+class TimezoneBase(BaseModel):
+    Timezone: str
+    Date : str
+    Time : str
+    isDST : bool
+    DST : str
+
+class TimezoneCreate(WeatherBase):
+
+    def  __str__(self):
+        return str({"Timezone": self.Timezone, "Date": self.Date, "Time": self.Time, "isDST": self.isDST, "DST": self.DST})
+    
+
+class Timezone(TimezoneBase):
+    class Config:
+        orm_mode = True
+
+# TimeZone   

@@ -92,3 +92,25 @@ def create_country(db: Session, request : str, response: Schemas.WeatherCreate):
     db.commit()
     db.refresh(location)
     return location
+
+
+def create_timezone(db: Session, request : str, response: Schemas.WeatherCreate):
+    requestID = generate_requestID()
+
+    create_requestID(requestID, db, str(request))
+
+    data = json.loads(response)
+
+    location = Models.Timezone(
+        RequestID = requestID,
+        Timezone = data["Timezone"],
+        Date = data["Date"],
+        Time = data["Time"],
+        isDST = data["isDST"],
+        DST = data["DST"]
+    )
+
+    db.add(location)
+    db.commit()
+    db.refresh(location)
+    return location

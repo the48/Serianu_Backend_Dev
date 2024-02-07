@@ -107,20 +107,20 @@ def populate_db(latitude, longitude):
         
 
         # Ccountry
-        country_data = Country.FetchData(latitude, longitude)
-        if country_data["StatusCode"] == "200":
-            return Operations.create_country(db = db_conn, request = str(request_data), response = country_data["Content"])
-        else:
-            Operations.create_failed_request(db = db_conn, request = request_data, response = country_data["Content"])
+        # country_data = Country.FetchData(latitude, longitude)
+        # if country_data["StatusCode"] == "200":
+        #     return Operations.create_country(db = db_conn, request = str(request_data), response = country_data["Content"])
+        # else:
+        #     Operations.create_failed_request(db = db_conn, request = request_data, response = country_data["Content"])
 
         
 
-        # # get timezone
-        # timezone_data = Timezone.FetchData(latitude, longitude)["Content"]
-        # if timezone_data["StatusCode"] == "200":
-        #     latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
-        # else:
-        #     return # db entry failed, send request
+        # get timezone
+        timezone_data = Timezone.FetchData(latitude, longitude)
+        if timezone_data["StatusCode"] == "200":
+            return Operations.create_timezone(db = db_conn, request = str(request_data), response = timezone_data["Content"])
+        else:
+            return # db entry failed, send request
 
 
         # # get news
