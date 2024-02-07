@@ -71,7 +71,7 @@ class Timezone(Base):
     DST = Column(String)
 
 
-class News(Base):
+class Newss(Base):
     __tablename__ = "News"
 
     RequestID = Column(String, primary_key=True)

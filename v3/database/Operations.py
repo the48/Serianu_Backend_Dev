@@ -2,6 +2,7 @@ import datetime
 import uuid
 import json
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 from . import Models, Schemas
 
@@ -12,6 +13,9 @@ def get_requestID(db: Session, requestID: str):
 def generate_requestID():
     return uuid.uuid4().hex
 
+
+def get_updates(db: Session):
+    return db.query(Models.News).order_by(desc(Models.News.PublishedDate)).first()
 
 def create_requestID(uuid, db: Session, request: Schemas.RequestCreate):
     request = Models.Request(RequestID = uuid, Payload = str(request), Successful = True, Timestamp = str(datetime.datetime.now().replace(microsecond = 0))

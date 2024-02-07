@@ -18,8 +18,25 @@ class RequestCreate(RequestBase):
 class Request(RequestBase):
     class Config:
         orm_mode = True
+
+
 # Requests
+class MainRequest(BaseModel):
+    Location: str    
+
+
+class MainResponse(BaseModel):
+    Location: str
+    Latitude: str
+    Longitude: str
+    Temperature: str
+    isDay: bool
+    NewsUpdate: str
+    Country: str
+    LocalTime: str
+#
         
+
 
 # Locations
 class LocationBase(BaseModel):
@@ -65,13 +82,13 @@ class Weather(WeatherBase):
 class CountryBase(BaseModel):
     Country: str
 
-class CountryCreate(WeatherBase):
+class CountryCreate(CountryBase):
 
     def  __str__(self):
         return str({"Country": self.Country})
     
 
-class Country(WeatherBase):
+class Country(CountryBase):
     class Config:
         orm_mode = True
 
@@ -87,7 +104,7 @@ class TimezoneBase(BaseModel):
     isDST : bool
     DST : str
 
-class TimezoneCreate(WeatherBase):
+class TimezoneCreate(TimezoneBase):
 
     def  __str__(self):
         return str({"Timezone": self.Timezone, "Date": self.Date, "Time": self.Time, "isDST": self.isDST, "DST": self.DST})
@@ -100,19 +117,19 @@ class Timezone(TimezoneBase):
 # TimeZone   
         
 
-# Weather
+# News
 class NewsBase(BaseModel):
     Title : str
     PublishedDate : str
     Link : str
 
-class NewsCreate(WeatherBase):
+class NewsCreate(NewsBase):
 
     def  __str__(self):
         return str({"Title": self.Title, "PublishedDate": self.PublishedDate, "Link": self.Link})
 
-class News(WeatherBase):
+class News(NewsBase):
     class Config:
         orm_mode = True
 
-# Weather  
+# News  
