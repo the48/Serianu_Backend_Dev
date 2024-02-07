@@ -74,3 +74,21 @@ def create_weather(db: Session, request : str, response: Schemas.WeatherCreate):
     db.commit()
     db.refresh(location)
     return location
+
+
+def create_country(db: Session, request : str, response: Schemas.WeatherCreate):
+    requestID = generate_requestID()
+
+    create_requestID(requestID, db, str(request))
+
+    data = json.loads(response)
+
+    location = Models.Country(
+        RequestID = requestID,
+        Country = data["Country"]
+    )
+
+    db.add(location)
+    db.commit()
+    db.refresh(location)
+    return location

@@ -52,3 +52,10 @@ class Weather(Base):
     isDay = Column(Boolean)
     Temperature = Column(String)
     Precipitation = Column(String)
+
+
+class Country(Base):
+    __tablename__ = "Country"
+
+    RequestID = Column(String, primary_key=True)
+    Country = Column(String)

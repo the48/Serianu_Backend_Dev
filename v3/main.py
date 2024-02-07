@@ -98,20 +98,21 @@ def populate_db(latitude, longitude):
         #     pass
         
         # Weather
-        weather_data = Weather.FetchData(latitude, longitude)
+        # weather_data = Weather.FetchData(latitude, longitude)
         request_data = {"Latitude": f"{latitude}", "Longitude": f"{longitude}"}
-        if weather_data["StatusCode"] == "200":
-            return Operations.create_weather(db = db_conn, request = request_data, response = weather_data["Content"])
-        else:
-            Operations.create_failed_request(db = db_conn, request = request_data, response = weather_data["Content"])
+        # if weather_data["StatusCode"] == "200":
+        #     return Operations.create_weather(db = db_conn, request = request_data, response = weather_data["Content"])
+        # else:
+        #     Operations.create_failed_request(db = db_conn, request = request_data, response = weather_data["Content"])
         
 
-        # # get country
-        # country_data = Country.FetchData(latitude, longitude)["Content"]
-        # if country_data["StatusCode"] == "200":
-        #     latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
-        # else:
-        #     return # db entry failed, send request
+        # Ccountry
+        country_data = Country.FetchData(latitude, longitude)
+        if country_data["StatusCode"] == "200":
+            return Operations.create_country(db = db_conn, request = str(request_data), response = country_data["Content"])
+        else:
+            Operations.create_failed_request(db = db_conn, request = request_data, response = country_data["Content"])
+
         
 
         # # get timezone

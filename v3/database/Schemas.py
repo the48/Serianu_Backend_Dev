@@ -57,4 +57,22 @@ class Weather(WeatherBase):
     class Config:
         orm_mode = True
 
-# Weather        
+# Weather            
+
+
+# Country
+        
+class CountryBase(BaseModel):
+    Country: str
+
+class CountryCreate(WeatherBase):
+
+    def  __str__(self):
+        return str({"Country": self.Country})
+    
+
+class Country(WeatherBase):
+    class Config:
+        orm_mode = True
+
+# Country   
