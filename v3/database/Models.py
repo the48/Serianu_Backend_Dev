@@ -44,3 +44,11 @@ class Location(Base):
     Longitude = Column(String)
 
     # request = relationship("Requests", back_populates="Location")
+
+class Weather(Base):
+    __tablename__ = "Weather"
+
+    RequestID = Column(String, primary_key=True)
+    isDay = Column(Boolean)
+    Temperature = Column(String)
+    Precipitation = Column(String)

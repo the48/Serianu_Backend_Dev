@@ -85,24 +85,25 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     return Token(access_token = access_token, token_type = "bearer")
 
 
-def populate_db(location):
+def populate_db(latitude, longitude):
     try:
-        location_data = Location.FetchData(location)
-        if location_data["StatusCode"] == "200":
-            latitude, longitude = location_data["Content"].replace(" ", "").split(",")
-            return Operations.create_location(db = db_conn, request = location, response = location_data)
-        
-        else:
-            Operations.create_failed_request(db = db_conn, request = location, response = location_data)
-            return None
-        
+        # Location
+        # location_data = Location.FetchData(location)
 
-        # # get weather
-        # weather_data = Weather.FetchData(latitude, longitude)["Content"]
-        # if weather_data["StatusCode"] == "200":
-        #     latitude, longitude = weather_data["Content"].replace(" ", "").split(",")
+        # if location_data["StatusCode"] == "200":
+        #     latitude, longitude = location_data["Content"].replace(" ", "").split(",")
+        #     return Operations.create_location(db = db_conn, request = location, response = location_data)      
         # else:
-        #     return # db entry failed, send request
+        #     Operations.create_failed_request(db = db_conn, request = location, response = location_data)
+        #     pass
+        
+        # Weather
+        weather_data = Weather.FetchData(latitude, longitude)
+        request_data = {"Latitude": f"{latitude}", "Longitude": f"{longitude}"}
+        if weather_data["StatusCode"] == "200":
+            return Operations.create_weather(db = db_conn, request = request_data, response = weather_data["Content"])
+        else:
+            Operations.create_failed_request(db = db_conn, request = request_data, response = weather_data["Content"])
         
 
         # # get country
@@ -132,7 +133,7 @@ def populate_db(location):
     except Exception as error:
         print(error)
 
-print(populate_db("Nairobi"))
+print(populate_db("-1.2832533", "36.8172449"))
         # use guid for req id
 
 if __name__ == "__main__":

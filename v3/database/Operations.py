@@ -1,5 +1,6 @@
 import datetime
 import uuid
+import json
 from sqlalchemy.orm import Session
 
 from . import Models, Schemas
@@ -51,4 +52,25 @@ def create_failed_request(db: Session, request : str, response: Schemas.RequestC
     db.add(request)
     db.commit()
     db.refresh(request)
-    return request                         
+    return request
+
+# return Operations.create_weather(db = db_conn, request = str.join(latitude, longitude), response = weather_data)
+
+def create_weather(db: Session, request : str, response: Schemas.WeatherCreate):
+    requestID = generate_requestID()
+
+    create_requestID(requestID, db, str(request))
+
+    data = json.loads(response)
+
+    location = Models.Weather(
+        RequestID = requestID,
+        isDay = data["isDay"],
+        Temperature = data["Temperature"],
+        Precipitation = data["Precipitation"]
+    )
+
+    db.add(location)
+    db.commit()
+    db.refresh(location)
+    return location

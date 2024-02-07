@@ -38,4 +38,23 @@ class Location(LocationBase):
     class Config:
         orm_mode = True
 
-# Locations       
+# Locations    
+
+# Weather
+class WeatherBase(BaseModel):
+    isDay: bool
+    Temperature: str
+    Precipitation: str
+
+
+class WeatherCreate(WeatherBase):
+
+    def  __str__(self):
+        return str({"isDay": self.isDay, "Temperature": self.Temperature, "Precipitation": self.Precipitation})
+    pass
+
+class Weather(WeatherBase):
+    class Config:
+        orm_mode = True
+
+# Weather        
